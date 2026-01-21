@@ -23,10 +23,13 @@ export default function Dashboard() {
         body: JSON.stringify(formData)
       });
       const data = await res.json();
-      if (data.success) {
-        setStatus({ type: 'success', message: 'Agent Dispatched successfully! 🚀' });
+      if (data.status === 'success') {
+        setStatus({
+          type: 'success',
+          message: `✅ Success! Duration: ${data.duration}s | Device: ${data.device} | Region: ${data.region}`
+        });
       } else {
-        setStatus({ type: 'error', message: data.error || 'Failed to dispatch agent.' });
+        setStatus({ type: 'error', message: data.message || 'Failed to dispatch agent.' });
       }
     } catch (e) {
       setStatus({ type: 'error', message: 'Network error occurred.' });
