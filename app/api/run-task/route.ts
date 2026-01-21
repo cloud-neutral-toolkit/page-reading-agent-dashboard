@@ -1,30 +1,37 @@
 import { NextResponse } from 'next/server';
-import { executeCloudRunJob } from '@/lib/gcp';
-
-// 映射表：前端选项 -> 真实的 Job 名称和区域
-const JOBS = {
-    'JP': { region: 'asia-northeast1', name: 'agent-tokyo' },
-    'US': { region: 'us-central1', name: 'agent-us' }
-};
 
 export async function POST(req: Request) {
     try {
-        const { url, mode, device, region } = await req.json();
-        const targetJob = JOBS[region as keyof typeof JOBS];
+        const body = await req.json();
 
-        if (!targetJob) throw new Error('Invalid Region');
+        // Read the Cloud Run Service URL from environment variables
+        const serviceUrl = process.env.AGENT_SERVICE_URL;
 
-        // Make sure we pass strings for all environment variables
-        await executeCloudRunJob(targetJob.region, targetJob.name, {
-            TARGET_URL: url,
-            MODE: mode,
-            DEVICE: device,
-            REGION_HINT: region
+        if (!serviceUrl) {
+            throw new Error('AGENT_SERVICE_URL environment variable is not set');
+        }
+
+        console.log(`Proxying task to Agent Service: ${serviceUrl}`);
+
+        const response = await fetch(serviceUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
         });
 
-        return NextResponse.json({ success: true, message: 'Agent Dispatched 🚀' });
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Agent Service failed [${response.status}]: ${errText}`);
+        }
+
+        const data = await response.json();
+        return NextResponse.json(data);
+
     } catch (error: any) {
-        console.error(error);
+        console.error('Task execution failed:', error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }
+
