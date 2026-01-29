@@ -241,20 +241,21 @@ export default function SEOAuditPanel({ result, loading }: SEOAuditPanelProps) {
                     <div className="space-y-4">
                         {Object.entries(result.scores).map(([key, value]) => {
                             if (key === 'overall') return null;
+                            const scoreValue = value as number;
                             return (
                                 <div key={key} className="space-y-2">
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="text-slate-300 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                                        <span className={`font-semibold ${getScoreColor(value as number)}`}>{value}/100</span>
+                                        <span className={`font-semibold ${getScoreColor(scoreValue)}`}>{scoreValue}/100</span>
                                     </div>
                                     <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
                                         <div
-                                            className={`h-full transition-all ${value >= 80 ? 'bg-green-500' :
-                                                value >= 60 ? 'bg-yellow-500' :
-                                                    value >= 40 ? 'bg-orange-500' :
+                                            className={`h-full transition-all ${scoreValue >= 80 ? 'bg-green-500' :
+                                                scoreValue >= 60 ? 'bg-yellow-500' :
+                                                    scoreValue >= 40 ? 'bg-orange-500' :
                                                         'bg-red-500'
                                                 }`}
-                                            style={{ width: `${value}%` }}
+                                            style={{ width: `${scoreValue}%` }}
                                         />
                                     </div>
                                 </div>
@@ -272,7 +273,7 @@ export default function SEOAuditPanel({ result, loading }: SEOAuditPanelProps) {
                                     Critical Issues
                                 </h3>
                                 <div className="space-y-2">
-                                    {result.issues.details.critical.map((issue, idx) => (
+                                    {result.issues.details.critical.map((issue: any, idx: number) => (
                                         <div key={idx} className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-sm text-red-300">
                                             {issue.message}
                                         </div>
@@ -288,7 +289,7 @@ export default function SEOAuditPanel({ result, loading }: SEOAuditPanelProps) {
                                     Warnings
                                 </h3>
                                 <div className="space-y-2">
-                                    {result.issues.details.warnings.map((issue, idx) => (
+                                    {result.issues.details.warnings.map((issue: any, idx: number) => (
                                         <div key={idx} className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 text-sm text-yellow-300">
                                             {issue.message}
                                         </div>
@@ -304,7 +305,7 @@ export default function SEOAuditPanel({ result, loading }: SEOAuditPanelProps) {
                                     Suggestions
                                 </h3>
                                 <div className="space-y-2">
-                                    {result.issues.details.suggestions.map((issue, idx) => (
+                                    {result.issues.details.suggestions.map((issue: any, idx: number) => (
                                         <div key={idx} className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 text-sm text-blue-300">
                                             {issue.message}
                                         </div>
