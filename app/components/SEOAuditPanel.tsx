@@ -44,7 +44,7 @@ interface SEOAuditResult {
 }
 
 interface SEOAuditPanelProps {
-    result: SEOAuditResult | null;
+    result: SEOAuditResult | any | null;
     loading: boolean;
 }
 
@@ -73,6 +73,24 @@ export default function SEOAuditPanel({ result, loading }: SEOAuditPanelProps) {
                 <div className="text-center text-slate-400 py-12">
                     <Info className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p>Run an SEO audit to see results here</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Handle error state from API
+    if (result.status === 'error' || !result.summary) {
+        return (
+            <div className="bg-slate-800/50 backdrop-blur-xl border border-red-500/20 rounded-2xl p-6">
+                <div className="text-center py-12">
+                    <AlertTriangle className="h-12 w-12 text-red-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-red-400 mb-2">Audit Failed</h3>
+                    <p className="text-slate-400 max-w-md mx-auto">
+                        {result.error || result.message || "An unexpected error occurred while performing the SEO audit."}
+                    </p>
+                    <div className="mt-4 text-xs text-slate-500 bg-slate-900/50 p-3 rounded font-mono inline-block">
+                        {JSON.stringify(result, null, 2)}
+                    </div>
                 </div>
             </div>
         );
@@ -207,8 +225,8 @@ export default function SEOAuditPanel({ result, loading }: SEOAuditPanelProps) {
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`flex-1 px-4 py-3 text-sm font-medium transition-all ${activeTab === tab
-                                    ? 'text-blue-400 border-b-2 border-blue-400 bg-slate-700/30'
-                                    : 'text-slate-400 hover:text-slate-300 hover:bg-slate-700/20'
+                                ? 'text-blue-400 border-b-2 border-blue-400 bg-slate-700/30'
+                                : 'text-slate-400 hover:text-slate-300 hover:bg-slate-700/20'
                                 }`}
                         >
                             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -232,9 +250,9 @@ export default function SEOAuditPanel({ result, loading }: SEOAuditPanelProps) {
                                     <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
                                         <div
                                             className={`h-full transition-all ${value >= 80 ? 'bg-green-500' :
-                                                    value >= 60 ? 'bg-yellow-500' :
-                                                        value >= 40 ? 'bg-orange-500' :
-                                                            'bg-red-500'
+                                                value >= 60 ? 'bg-yellow-500' :
+                                                    value >= 40 ? 'bg-orange-500' :
+                                                        'bg-red-500'
                                                 }`}
                                             style={{ width: `${value}%` }}
                                         />
