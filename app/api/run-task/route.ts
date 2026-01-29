@@ -13,7 +13,13 @@ export async function POST(req: Request) {
 
         console.log(`Proxying task to Agent Service: ${serviceUrl}`);
 
-        const response = await fetch(serviceUrl, {
+        // Determine endpoint based on request body
+        const endpoint = body.endpoint || '';
+        const targetUrl = `${serviceUrl}${endpoint}`;
+
+        console.log(`Target URL: ${targetUrl}`);
+
+        const response = await fetch(targetUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
