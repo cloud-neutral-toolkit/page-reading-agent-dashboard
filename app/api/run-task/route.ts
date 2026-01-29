@@ -23,6 +23,7 @@ export async function POST(req: Request) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-Service-Token': process.env.INTERNAL_SERVICE_TOKEN || '',
             },
             body: JSON.stringify(body)
         });
